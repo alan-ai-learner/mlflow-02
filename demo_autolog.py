@@ -37,26 +37,13 @@ def main(alpha, l1_ratio):
     test_y = test[[TARGET]]
 
     # mlflow implementation-
-    with mlflow.start_run():
-        
-        mlflow.log_param("alpha", alpha)
-        mlflow.log_param("l1_ratio", l1_ratio)
-
-        model_lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
-        model_lr.fit(train_x, train_y)
-
-        pred = model_lr.predict(test_x)
-
-        rmse, mae, r2 = evaluate(test_y, pred)
-        
-        mlflow.log_metric("rmse", rmse)
-        mlflow.log_metric("mae", mae)
-        mlflow.log_metric("r2", r2)
-
-        print(f"params- alpha: {alpha}, l1_ratio: {l1_ratio}")
-        print(f"eval metrics - rmse: {rmse}, mae: {mae}, r2: {r2}")
-
-        mlflow.sklearn.log_model(model_lr, "model") # model, foldername
+    mlflow.sklearn.autolog()
+    model_lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
+    model_lr.fit(train_x, train_y)
+    pred = model_lr.predict(test_x)
+    rmse, mae, r2 = evaluate(test_y, pred)
+    print(f"params- alpha: {alpha}, l1_ratio: {l1_ratio}")
+    print(f"eval metrics - rmse: {rmse}, mae: {mae}, r2: {r2}")
 
 
 if __name__ == '__main__':
